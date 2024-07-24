@@ -1,10 +1,13 @@
-import React, { useState , useRef } from 'react'
+import React, { useState , useRef  } from 'react'
 import Header from "./Header";
 import { checkValidData } from '../utils/validate';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-
+import { useNavigate } from "react-router-dom";
 import {signInWithEmailAndPassword } from "firebase/auth";
 import {auth} from "../utils/firebase";
+import { updateProfile } from "firebase/auth";
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 
 
@@ -12,7 +15,12 @@ const Login = () => {
     const [isSignInForm , setIsSignInForm] = useState(true);
     // we want to store the error message so we will create useState
     const [errorMessage , seterrorMessage] = useState(null);
+    //use navigate to navigate to that path
+    const navigate = useNavigate(); 
+
+    const dispatch = useDispatch();
     // useref is used to refrence 
+    const name = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
     const toggleSignInForm = () => {
@@ -35,13 +43,26 @@ const Login = () => {
            .then((userCredential) => {
               // Signed up 
               const user = userCredential.user;
+              updateProfile(user, {
+                displayName: name.current.value,
+              }).then(() => {
+                // Profile updated!
+                const {uid , email , displayName} = auth.currentUser; // we cant wrie user bcoz we want updated value
+                dispatch(addUser({uid : uid , email : email , displayName : displayName}));
+                navigate("/browse");
+              }).catch((error) => {
+                // An error occurred
+                seterrorMessage(error.message);
+              });
               console.log(user);
+              
               // ...
             })
             .catch((error) => {
               const errorCode = error.code;
               const errorMessage = error.message;
               seterrorMessage(errorCode + " -- "+ errorMessage);
+              navigate("/");
             });
 
         }
@@ -52,12 +73,15 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
+          //if user signed in navigate to browse 
+          navigate("/browse");
           
           
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          navigate("/");
         
         });
 
@@ -78,7 +102,7 @@ const Login = () => {
         <h1 className = "font-bold text-3xl py-4">
              {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
-        {!isSignInForm && ( <input type="text" placeholder= " Full Name " className = " p-2 my-4 w-full bg-gray-800 bg-opacity-60" />)}
+        {!isSignInForm && ( <input ref = {name} type="text" placeholder= " Full Name " className = " p-2 my-4 w-full bg-gray-800 bg-opacity-60" />)}
         <input 
         ref = {email}
         type="text" 
