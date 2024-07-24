@@ -1,6 +1,10 @@
 import React, { useState , useRef } from 'react'
 import Header from "./Header";
 import { checkValidData } from '../utils/validate';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
+import {signInWithEmailAndPassword } from "firebase/auth";
+import {auth} from "../utils/firebase";
 
 
 
@@ -17,12 +21,47 @@ const Login = () => {
     };
     const handleButtonClick = () => {
         //validate form data 
-        console.log(email.current.value);
-        console.log(password.current.value);
+        //console.log(email.current.value);
+        //console.log(password.current.value);
 
         const message = checkValidData(email.current.value , password.current.value);
         seterrorMessage(message); // if message returns NUll means no error 
 
+        if(message) return;  //error --> dont go ahead
+
+        //sign IN , sign Up logic
+        if(!isSignInForm) {
+          createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+           .then((userCredential) => {
+              // Signed up 
+              const user = userCredential.user;
+              console.log(user);
+              // ...
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              seterrorMessage(errorCode + " -- "+ errorMessage);
+            });
+
+        }
+        else {
+
+          //sign In Logic 
+        signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          
+          
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        
+        });
+
+        }
 
     }
   return <div>
