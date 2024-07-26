@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
 import { addUser, removeUser } from '../utils/userSlice';
+import { logo } from '../utils/constant';
+import { userIcon } from '../utils/constant';
 
 
 const Header = () => {
@@ -24,12 +26,13 @@ const Header = () => {
     const unsubscribe =  onAuthStateChanged(auth, (user) => {
     if (user) {
        // if user sign in this party will be executed
-        const {uid , email , displayName} = user;
+        const {uid , email , displayName , photoURL} = user;
         dispatch(
             addUser({
                 uid : uid , 
                 email : email , 
-                displayName : displayName
+                displayName : displayName,
+                photoURL : photoURL
             }));
             navigate("/browse");
     } else {
@@ -47,7 +50,7 @@ const Header = () => {
 
         <img 
         className= "w-52" 
-        src = "https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png "
+        src = {logo}
         alt = "Netflix Logo" 
         />
     {user && (
@@ -55,7 +58,7 @@ const Header = () => {
       <img
            className="w-12 h-12 pr-2"
            alt="usericon"
-           src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg"
+           src= {user?.photoURL}
          />
          <button onClick = {handleSignOut} className="font-bold text-white"> (Sign Out) </button>
    </div>

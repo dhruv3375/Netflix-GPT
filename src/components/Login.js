@@ -8,6 +8,7 @@ import {auth} from "../utils/firebase";
 import { updateProfile } from "firebase/auth";
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { userIcon } from '../utils/constant';
 
 
 
@@ -44,10 +45,11 @@ const Login = () => {
               const user = userCredential.user;
               updateProfile(user, {
                 displayName: name.current.value,
+                photoURL : userIcon
               }).then(() => {
                 // Profile updated!
-                const {uid , email , displayName} = auth.currentUser; // we cant wrie user bcoz we want updated value
-                dispatch(addUser({uid : uid , email : email , displayName : displayName}));
+                const {uid , email , displayName , photoURL} = auth.currentUser; // we cant wrie user bcoz we want updated value
+                dispatch(addUser({uid : uid , email : email , displayName : displayName , photoURL : photoURL}));
               
               }).catch((error) => {
                 // An error occurred
