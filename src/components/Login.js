@@ -2,7 +2,7 @@ import React, { useState , useRef  } from 'react'
 import Header from "./Header";
 import { checkValidData } from '../utils/validate';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+
 import {signInWithEmailAndPassword } from "firebase/auth";
 import {auth} from "../utils/firebase";
 import { updateProfile } from "firebase/auth";
@@ -15,8 +15,7 @@ const Login = () => {
     const [isSignInForm , setIsSignInForm] = useState(true);
     // we want to store the error message so we will create useState
     const [errorMessage , seterrorMessage] = useState(null);
-    //use navigate to navigate to that path
-    const navigate = useNavigate(); 
+    
 
     const dispatch = useDispatch();
     // useref is used to refrence 
@@ -49,12 +48,12 @@ const Login = () => {
                 // Profile updated!
                 const {uid , email , displayName} = auth.currentUser; // we cant wrie user bcoz we want updated value
                 dispatch(addUser({uid : uid , email : email , displayName : displayName}));
-                navigate("/browse");
+              
               }).catch((error) => {
                 // An error occurred
                 seterrorMessage(error.message);
               });
-              console.log(user);
+             
               
               // ...
             })
@@ -62,7 +61,7 @@ const Login = () => {
               const errorCode = error.code;
               const errorMessage = error.message;
               seterrorMessage(errorCode + " -- "+ errorMessage);
-              navigate("/");
+              
             });
 
         }
@@ -73,15 +72,15 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          //if user signed in navigate to browse 
-          navigate("/browse");
+          
+          
           
           
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          navigate("/");
+         
         
         });
 
