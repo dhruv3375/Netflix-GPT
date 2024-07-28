@@ -12,7 +12,7 @@ const VideoBackground = ({movieId}) => {
  
   //console.log(movies);
   
-  console.log(trailorVideo);
+  //console.log(trailorVideo);
   //console.log(movieId)
  
   // console.log(size);
